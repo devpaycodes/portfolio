@@ -1,0 +1,69 @@
+name: Deploy React App to GitHub Pages
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the "main" branch
+  push:
+    branches:
+      - main
+
+  # Allows the workflow to be run manually from the Actions tab
+  workflow_dispatch:
+
+# Set permissions for deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Define the jobs that will run in this workflow
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository's content
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Node.js environment using the version specified in the package.json
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      # Install dependencies and build the React project
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+
+      # Upload the build directory as an artifact
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build
+
+  # Deploy the React app to GitHub Pages
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Download the build artifacts created in the previous job
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+
+      # Deploy the build directory to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
