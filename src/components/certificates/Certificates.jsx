@@ -1,6 +1,6 @@
 import React from 'react'
 import './certificates.css'
-import { Pagination, Navigation } from 'swiper';
+import { Pagination, Navigation, Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import pic1 from '../../assets/certificates/pic1.png'
 import pic2 from '../../assets/certificates/pic2.png'
@@ -26,9 +26,17 @@ const Certificates = () => {
       <h2>Certificates</h2>
 
       <Swiper className='container certificates__container'
-        modules={[Pagination, Navigation]} spaceBetween={40}
+        modules={[Pagination, Navigation, Autoplay]} spaceBetween={40}
         slidesPerView={1}
-        pagination={{ clickable: true }}>
+        pagination={{ clickable: true }}
+        navigation
+        loop={true}
+        autoplay={{
+          delay: 3000,
+          disableOnInteraction: false, 
+        }}
+        >
+          
         {
           data.map((avatar, index) => {
             return (
